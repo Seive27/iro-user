@@ -3,8 +3,10 @@ import { useState } from "react";
 import Navbar from "./components/navbar.jsx";
 import Home from "./pages/home.jsx";
 import Adopt from "./pages/adopt.jsx";
+import Events from "./pages/events.jsx";
 import AboutUs from "./pages/aboutus.jsx";
 import Contact from "./pages/contact.jsx";
+import Gallery from "./pages/gallery.jsx";
 import Donate from "./pages/donate.jsx";
 import Login from "./pages/login.jsx";
 import Signup from "./pages/signup.jsx";
@@ -24,8 +26,10 @@ export default function App() {
         {/* Pass isLoggedIn to Adopt page to trigger the "Login Required" modal */}
         <Route path="/adopt" element={<Adopt isLoggedIn={isLoggedIn} />} />
         
+        <Route path="/events" element={<Events />} />
         <Route path="/aboutus" element={<AboutUs />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/gallery" element={<Gallery />} />
         <Route path="/donate" element={<Donate />} />
         
         {/* Auth Routes */}

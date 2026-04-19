@@ -6,14 +6,22 @@ import logo from "../assets/iro-logo.png";
 const NAV_LINKS = [
   { label: "Home",     href: "/",         type: "route"  },
   { label: "Adopt",    href: "/adopt",    type: "route"  },
-  { label: "Events",   href: "#events",   type: "anchor" },
-  { label: "About Us", href: "/aboutus",  type: "route"  },
-  { label: "Contact",  href: "/contact",  type: "route"  },
+  { label: "Events",   href: "/events",   type: "route"  },
+  { 
+    label: "Others", 
+    type: "dropdown",
+    items: [
+      { label: "About Us", href: "/aboutus" },
+      { label: "Contact", href: "/contact" },
+      { label: "Gallery", href: "/gallery" },
+    ]
+  },
 ];
 
 export default function Navbar({ isLoggedIn, setIsLoggedIn }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userDropdown, setUserDropdown] = useState(false);
+  const [othersDropdown, setOthersDropdown] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -41,6 +49,9 @@ export default function Navbar({ isLoggedIn, setIsLoggedIn }) {
   };
 
   const isActive = (link) => {
+    if (link.type === "dropdown") {
+      return link.items.some(item => location.pathname === item.href);
+    }
     return link.type === "route" ? location.pathname === link.href : false;
   };
 
@@ -81,14 +92,46 @@ export default function Navbar({ isLoggedIn, setIsLoggedIn }) {
             {/* Desktop Nav */}
             <div className="hidden md:flex items-center gap-1">
               {NAV_LINKS.map((link) => (
-                <button
-                  key={link.href}
-                  onClick={() => handleNavClick(link)}
-                  className={`relative px-4 py-2 text-sm font-bold transition-colors border-none bg-transparent cursor-pointer
-                    ${isActive(link) ? "nav-link-active text-blue-600" : "text-slate-600 hover:text-blue-600"}`}
-                >
-                  {link.label}
-                </button>
+                link.type === "dropdown" ? (
+                  <div key={link.label} className="relative">
+                    <button
+                      onClick={() => setOthersDropdown(!othersDropdown)}
+                      className={`relative px-4 py-2 text-sm font-bold transition-colors border-none bg-transparent cursor-pointer flex items-center gap-1
+                        ${isActive(link) ? "nav-link-active text-blue-600" : "text-slate-600 hover:text-blue-600"}`}
+                    >
+                      {link.label}
+                      <ChevronDown size={14} className={`transition-transform ${othersDropdown ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    {othersDropdown && (
+                      <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 overflow-hidden z-50">
+                        {link.items.map((item) => (
+                          <button
+                            key={item.href}
+                            onClick={() => {
+                              navigate(item.href);
+                              setOthersDropdown(false);
+                            }}
+                            className={`w-full px-4 py-3 text-left text-sm font-medium transition-colors hover:bg-slate-50 ${
+                              location.pathname === item.href ? 'text-blue-600 bg-blue-50' : 'text-slate-700'
+                            }`}
+                          >
+                            {item.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <button
+                    key={link.href}
+                    onClick={() => handleNavClick(link)}
+                    className={`relative px-4 py-2 text-sm font-bold transition-colors border-none bg-transparent cursor-pointer
+                      ${isActive(link) ? "nav-link-active text-blue-600" : "text-slate-600 hover:text-blue-600"}`}
+                  >
+                    {link.label}
+                  </button>
+                )
               ))}
             </div>
 

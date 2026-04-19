@@ -25,8 +25,155 @@ import {
   Eye,
   Volume2,
   Activity,
+  X,
+  Calendar,
+  User as UserIcon,
 } from "lucide-react";
 import logo from "../assets/iro-logo.png";
+
+function RegistrationModal({ event, onClose }) {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    attendees: "1",
+    message: "",
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    alert(`Registration submitted for ${event.title}!`);
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+      <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-8">
+        <button
+          onClick={onClose}
+          className="absolute top-5 right-5 w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-xl flex items-center justify-center transition-colors"
+        >
+          <X className="w-5 h-5 text-slate-600" />
+        </button>
+
+        <div className="mb-6">
+          <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center mb-4">
+            <Calendar className="w-6 h-6 text-blue-600" />
+          </div>
+          <h2 className="display text-2xl font-bold text-slate-800 mb-2">
+            Register for Event
+          </h2>
+          <p className="text-slate-500 text-sm">{event.title}</p>
+          <div className="flex items-center gap-4 mt-3 text-xs text-slate-400">
+            <span className="flex items-center gap-1">
+              <Calendar size={12} />
+              {event.month} {event.day}
+            </span>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="text-xs font-bold text-slate-600 uppercase tracking-wide mb-2 block">
+              Full Name
+            </label>
+            <div className="relative">
+              <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                placeholder="John Doe"
+                className="w-full pl-11 pr-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 outline-none text-sm"
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-slate-600 uppercase tracking-wide mb-2 block">
+              Email Address
+            </label>
+            <div className="relative">
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                placeholder="john@example.com"
+                className="w-full pl-11 pr-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 outline-none text-sm"
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-slate-600 uppercase tracking-wide mb-2 block">
+              Phone Number
+            </label>
+            <div className="relative">
+              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                placeholder="+1 (555) 000-0000"
+                className="w-full pl-11 pr-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 outline-none text-sm"
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-slate-600 uppercase tracking-wide mb-2 block">
+              Number of Attendees
+            </label>
+            <select
+              value={formData.attendees}
+              onChange={(e) => setFormData({...formData, attendees: e.target.value})}
+              className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 outline-none text-sm"
+            >
+              <option value="1">1 Person</option>
+              <option value="2">2 People</option>
+              <option value="3">3 People</option>
+              <option value="4">4 People</option>
+              <option value="5+">5+ People</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-slate-600 uppercase tracking-wide mb-2 block">
+              Additional Message (Optional)
+            </label>
+            <textarea
+              value={formData.message}
+              onChange={(e) => setFormData({...formData, message: e.target.value})}
+              placeholder="Any questions or special requirements?"
+              rows="3"
+              className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 outline-none text-sm resize-none"
+            />
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <button
+              type="submit"
+              className="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors"
+            >
+              Complete Registration
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-3 rounded-xl font-bold text-sm border-2 border-slate-200 hover:bg-slate-50 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
 
 /* ─────────────────────────────────────────────
    INTERSECTION OBSERVER HOOK
@@ -228,6 +375,7 @@ function isUserLoggedIn() {
 ───────────────────────────────────────────── */
 export default function OcatteryHomepage() {
   const navigate = useNavigate();
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   const [impactRef, impactInView] = useInView(0.3);
   const rescues   = useCounter(847,  2200, impactInView);
@@ -733,7 +881,10 @@ export default function OcatteryHomepage() {
 
                   {/* CTA */}
                   <div className="flex-shrink-0 hidden md:block">
-                    <button className="btn-blue text-white text-xs font-semibold px-5 py-2.5 rounded-xl flex items-center gap-1.5 cursor-pointer">
+                    <button 
+                      onClick={() => setSelectedEvent(ev)}
+                      className="btn-blue text-white text-xs font-semibold px-5 py-2.5 rounded-xl flex items-center gap-1.5 cursor-pointer"
+                    >
                       Register <ChevronRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -901,6 +1052,13 @@ export default function OcatteryHomepage() {
           </div>
         </Container>
       </footer>
+
+      {selectedEvent && (
+        <RegistrationModal
+          event={selectedEvent}
+          onClose={() => setSelectedEvent(null)}
+        />
+      )}
     </div>
   );
 }
